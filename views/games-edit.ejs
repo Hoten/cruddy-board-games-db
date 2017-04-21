@@ -1,6 +1,6 @@
 <h2>Edit Game</h2>
 
-<form id="edit-game" action="<%= '/game/' + game.name %>" method="PUT">
+<form id="edit-game" action="<%= '/game/' + game.name + "?_method=PUT"%>" method="POST">
   <label for="name">Name:</label>
   <input name="name" type="text" value="<%= game.name %>">
 

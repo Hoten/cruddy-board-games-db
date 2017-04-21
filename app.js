@@ -6,10 +6,43 @@ var express = require('express');
 var path = require('path');
 var ejsLayouts = require("express-ejs-layouts");
 var bodyParser = require('body-parser');
+var methodOverride = require('method-override');
+var morgan = require('morgan')
+
+// my custom middleware
+var separateRequests = function(req, res, next) {
+    console.log("------------------");
+
+    // call the next middleware in the stack
+    next();
+};
+
+var myCrappyLogger = function(req, res, next) {
+    console.log("Logged");
+    console.log('Request URL: ', req.url);
+    console.log('Request Type: ', req.method);
+    console.log("")
+
+    next();
+};
 
 var app = express();
 
-app.use(require('morgan')('dev'));
+
+// print --------
+app.use(separateRequests);
+
+// custom middle ware to log requests
+// app.use(myCrappyLogger);
+
+// override verb of request having ?_method=<VERB HERE>
+app.use(methodOverride('_method'));
+
+// custom middle ware to log requests (again)
+// app.use(myCrappyLogger);
+
+// this middleware is a logger, much better than my custom middle ware above.
+app.use(morgan('dev'));
 
 // this sets a static directory for the views
 app.use(express.static(path.join(__dirname, 'static')));
@@ -142,7 +175,7 @@ app.delete('/game/:name', function(req, res) {
     db.game.destroy({
         where: { name: nameOfTheGame }
     }).then(function() {
-        res.sendStatus(204); // http://stackoverflow.com/a/17093684
+        res.status(204).redirect('/games'); // http://stackoverflow.com/a/17093684
     });
 });
 

@@ -7,11 +7,9 @@
         <%= game.name %>
       </a>
 
-      ----------------
-
-      <a class="delete-link" href="<%= "/game/" + game.name %>">
-        Delete
-      </a>
+      <form method="POST" action="<%= "/game/" + game.name + "?_method=DELETE" %>">
+        <button type="submit">Delete</button>
+      </form>
     </li>
   <% }) %>
 </ul>
