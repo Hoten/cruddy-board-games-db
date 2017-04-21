@@ -1,13 +1,17 @@
 <h1>
-  <%= name %>
+  <%= game.name %>
 </h1>
 
 <p>
-  <%= description %>
+  Players: <%= game.numberOfPlayers %>
 </p>
 
 <p>
-  <a href="<%= "/game/" + name + "/edit" %>">
+  <%= game.description %>
+</p>
+
+<p>
+  <a href="<%= "/game/" + game.name + "/edit" %>">
     Edit Game
   </a>
 </p>

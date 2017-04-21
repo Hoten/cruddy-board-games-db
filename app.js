@@ -1,12 +1,15 @@
 // require the modules we need
 // STOP: what are these modules? Use online documentation to read up on them.
+
+var db = require('./models');
 var express = require('express');
 var path = require('path');
-var fs = require('fs');
 var ejsLayouts = require("express-ejs-layouts");
 var bodyParser = require('body-parser');
 
 var app = express();
+
+app.use(require('morgan')('dev'));
 
 // this sets a static directory for the views
 app.use(express.static(path.join(__dirname, 'static')));
@@ -24,9 +27,11 @@ app.get('/', function(req, res) {
 });
 
 app.get('/games', function(req, res) {
-    var games = getGames();
-
-    res.render('games-index', { games: games });
+    db.game.findAll().then(function(games) {
+        res.render('games-index', { games: games });
+    }).catch(function(error) {
+        res.status(404).send(error);
+    });
 });
 
 app.get('/games/new', function(req, res) {
@@ -34,87 +39,78 @@ app.get('/games/new', function(req, res) {
 });
 
 app.post('/games', function(req, res) {
-    console.log(req.body);
     var newGame = req.body;
 
-    var games = getGames();
-    games.push(newGame);
-    saveGames(games);
-
-    res.redirect('/games');
+    db.game.create({
+        name: newGame.name,
+        description: newGame.description,
+        numberOfPlayers: newGame.numberOfPlayers
+    }).then(function(game) {
+        res.status(303).redirect('/game/' + game.name); // http://stackoverflow.com/a/4587262
+    }).catch(function(error) {
+        res.status(404).send(error);
+    });
 });
 
 // show page
 app.get('/game/:name', function(req, res) {
     var nameOfTheGame = req.params.name;
-    var games = getGames();
-    var game = getGame(games, nameOfTheGame);
 
-    res.render('games-show', game);
+    db.game.findOne({
+        where: {
+            name: nameOfTheGame
+        }
+    }).then(function(game) {
+        res.render('games-show', { game: game });
+    }).catch(function(error) {
+        res.status(404).send(error);
+    });
 });
 
 app.get('/game/:name/edit', function(req, res) {
     var nameOfTheGame = req.params.name;
-    var games = getGames();
-    var game = getGame(games, nameOfTheGame);
 
-    res.render('games-edit', game);
+    db.game.findOne({
+        where: {
+            name: nameOfTheGame
+        }
+    }).then(function(game) {
+        res.render('games-edit', { game: game });
+    }).catch(function(error) {
+        res.status(404).send(error);
+    });
 });
 
 app.put('/game/:name', function(req, res) {
     var theNewGameData = req.body;
-
     var nameOfTheGame = req.params.name;
-    var games = getGames();
-    var game = getGame(games, nameOfTheGame);
 
-    game.name = theNewGameData.name;
-    game.description = theNewGameData.description;
+    var updateClause = {
+        name: theNewGameData.name,
+        description: theNewGameData.description,
+        numberOfPlayers: theNewGameData.numberOfPlayers
+    };
 
-    saveGames(games);
+    var options = {
+        where: { name: nameOfTheGame }
+    };
 
-    res.send(req.body);
+    db.game.update(updateClause, options).spread(function(updatedCount) {
+        res.redirect(303, '/game/' + theNewGameData.name);
+    }).catch(function(error) {
+        res.status(404).send(error);
+    });
 });
 
 app.delete('/game/:name', function(req, res) {
     var nameOfTheGame = req.params.name;
-    var games = getGames();
-    var game = getGame(games, nameOfTheGame);
-    var indexOfGameToDelete = games.indexOf(game);
 
-    games.splice(indexOfGameToDelete, 1);
-
-    saveGames(games);
-
-    res.send(game);
+    db.game.destroy({
+        where: { name: nameOfTheGame }
+    }).then(function() {
+        res.sendStatus(204); // http://stackoverflow.com/a/17093684
+    });
 });
-
-// helper functions
-
-function getGame(games, nameOfTheGame) {
-    var game = null;
-
-    for (var i = 0; i < games.length; i++) {
-        if (games[i].name.toLowerCase() == nameOfTheGame.toLowerCase()) {
-            game = games[i];
-            break;
-        }
-    }
-
-    return game;
-}
-
-// Read list of games from file.
-function getGames() {
-    var fileContents = fs.readFileSync('./games.json'); // :'(
-    var games = JSON.parse(fileContents);
-    return games;
-}
-
-// Write list of games to file.
-function saveGames(games) {
-    fs.writeFileSync('./games.json', JSON.stringify(games));
-}
 
 // start the server
 

@@ -1,25 +1,29 @@
 {
-    "name": "boardgames-db",
-    "version": "1.0.0",
-    "description": "a site where we keep track of our board game collection",
-    "main": "app.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [
-        "board",
-        "game",
-        "catan",
-        "settlers",
-        "dev"
-    ],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "body-parser": "^1.15.2",
-        "ejs": "^2.5.5",
-        "express": "^4.14.0",
-        "express-ejs-layouts": "^2.2.0",
-        "fs": "0.0.1-security"
-    }
+  "name": "boardgames-db",
+  "version": "1.0.0",
+  "description": "a site where we keep track of our board game collection",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "board",
+    "game",
+    "catan",
+    "settlers",
+    "dev"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "ejs": "^2.5.5",
+    "express": "^4.14.0",
+    "express-ejs-layouts": "^2.2.0",
+    "fs": "0.0.1-security",
+    "morgan": "^1.8.1",
+    "pg": "^6.1.5",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^3.30.4"
+  }
 }

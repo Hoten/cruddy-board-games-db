@@ -70,27 +70,34 @@ We will be replacing the `games.json` "database" with an actual database. We wil
 [Refer to sequelize cheatsheet](https://docs.google.com/document/d/1FzKCeskNwSnU_wWFFXbOUt8sEMPH79mxThMln0wxFfE/)
 
 1. Install the modules we need.
-	* `npm install --save pg pg-hstore sequelize`
+
+`npm install --save pg pg-hstore sequelize`
 
 2. Create the database.
-	* `createdb cruddy_board_games_db`
+
+`createdb cruddy_board_games_db`
 
 3. Initialize.
-  * `sequelize init`
+
+`sequelize init`
 
 4. Configure your `config.json` file.
 
 ### Create table and model
 
 1. Use the `sequelize` command line tool to create a `game` table in our database.
-  * `sequelize model:create --name game --attributes ...`
-  * What columns should be on `game`?
+
+`sequelize model:create --name game --attributes ...`
+
+What columns should be on `game`?
 
 2. Run the migrations.
-  * `sequelize db:migrate`
+
+`sequelize db:migrate`
 
 3. On the top of `app.js` file, require the models
-  * `var db = require("./models");`
+
+`var db = require("./models");`
 
 4. Delete `games.json`, `getGames()`, and `saveGames()`. Replace calls to those functions with appropriate usages of `db.game`.
 
@@ -132,12 +139,6 @@ Edit the new migration file `migrations/xxxxxxxxxxx-add-number-of-players-to-gam
 4. Update the model file `models/game.js`. Add the property: `numberOfPlayers: DataTypes.INTEGER`
 
 Make sure you also update the show, new game, and edit game pages to use the new `numberOfPlayers` property.
-
-### Validations
-
-Add some validations to our data. For example: num players should be at least 1. Game name should be at least X characters long, etc ...
-
-Refer to [the git note book](https://wdi_sea.gitbooks.io/notes/content/05-express/express-sequelize/05validationsmigrations.html) and [sequelize's documentation](http://docs.sequelizejs.com/en/latest/docs/models-definition/#validations).
 
 ## Licensing
 All content is licensed under a CC­BY­NC­SA 4.0 license.

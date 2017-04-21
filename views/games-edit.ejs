@@ -1,14 +1,14 @@
 <h2>Edit Game</h2>
 
-
-
-
-<form id="edit-game" action="<%= '/game/' + name %>" method="PUT">
+<form id="edit-game" action="<%= '/game/' + game.name %>" method="PUT">
   <label for="name">Name:</label>
-  <input name="name" type="text" value="<%= name %>">
+  <input name="name" type="text" value="<%= game.name %>">
+
+  <label for="numberOfPlayers">Number of players:</label>
+  <input name="numberOfPlayers" type="number" value="<%= game.numberOfPlayers %>">
 
   <label for="description">Description:</label>
-  <textarea name="description" cols="30" rows="10"><%= description %></textarea>
+  <textarea name="description" cols="30" rows="10"><%= game.description %></textarea>
 
   <input type="submit" value="Edit game!">
 </form>
