@@ -21,7 +21,7 @@ var myCrappyLogger = function(req, res, next) {
     console.log("Logged");
     console.log('Request URL: ', req.url);
     console.log('Request Type: ', req.method);
-    console.log("")
+    console.log("");
 
     next();
 };
