@@ -41,11 +41,21 @@ app.get('/games/new', function(req, res) {
 app.post('/games', function(req, res) {
     var newGame = req.body;
 
-    db.game.create({
+    var value = {
         name: newGame.name,
         description: newGame.description,
         numberOfPlayers: newGame.numberOfPlayers
-    }).then(function(game) {
+    };
+
+    // [options.logging=false]  Function
+    var options = {
+        logging: function() {
+            console.log("we got a log!");
+        }
+    };
+
+    // create(values, [options]) -> Promise.<Instance>
+    db.game.create(value, options).then(function(game) {
         res.status(303).redirect('/game/' + game.name); // http://stackoverflow.com/a/4587262
     }).catch(function(error) {
         res.status(404).send(error);
@@ -56,15 +66,39 @@ app.post('/games', function(req, res) {
 app.get('/game/:name', function(req, res) {
     var nameOfTheGame = req.params.name;
 
+    // find one, do not create
     db.game.findOne({
         where: {
             name: nameOfTheGame
         }
     }).then(function(game) {
-        res.render('games-show', { game: game });
+        if (game) {
+            res.render('games-show', { game: game });
+        } else {
+            res.status(404).send("Doesn't exist :(");
+        }
     }).catch(function(error) {
         res.status(404).send(error);
     });
+
+    // findOrCreate(options) -> Promise.<Instance, created>
+    // db.game.findOrCreate({
+    //     where: {
+    //         name: nameOfTheGame
+    //     },
+    //     defaults: {
+    //         description: 'This game doesn\'t exist yet. Would you like to edit it?',
+    //         numberOfPlayers: 0
+    //     }
+    // }).spread(function(game, wasCreated) {
+    //     if (game) {
+    //         res.render('games-show', { game: game });
+    //     } else {
+    //         res.status(404).send("Doesn't exist :(");
+    //     }
+    // }).catch(function(error) {
+    //     res.status(404).send(error);
+    // });
 });
 
 app.get('/game/:name/edit', function(req, res) {
